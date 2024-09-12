@@ -33,22 +33,23 @@ public class AddMotorCycle
         }
     }
 
-    public class AddMotorCycleModule: ICarterModule
-    {        
+    public class AddMotorCycleModule : ICarterModule
+    {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/motos", async ([FromBody] MotorCycleRequest request, [FromServices] ISender sender) =>
-            {               
-                var result = await sender.Send(request);               
+            {
+                var result = await sender.Send(request);
 
-                return result.IsSuccess ?  Results.Created()
-                : Results.BadRequest(result.Error);                
+                return result.IsSuccess ? Results.Created()
+                : Results.BadRequest(result.Error);
             })
             .Produces<BadRequest<Error>>()
             .Produces<Created<MotorCycleResponse>>()
             .WithTags("MotorCycles")
-            .WithName("AddMotorCycle")            
-            .IncludeInOpenApi();                        
+            .WithName("AddMotorCycle")
+            .WithSummary("Cadastrar uma nova moto")
+            .IncludeInOpenApi();
         }
     }
 }
