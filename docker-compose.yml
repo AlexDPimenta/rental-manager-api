@@ -1,0 +1,100 @@
+services:
+  rentalmanager.webapi:
+    image: ${DOCKER_REGISTRY-}rentalmanagerwebapi
+    build:
+      context: .
+      dockerfile: src/RentalManager.WebApi/Dockerfile
+    environment:
+      - 'ASPNETCORE_ENVIRONMENT=Development'
+      - 'ASPNETCORE_URLS=https://+;http://+'
+      - 'ASPNETCORE_Kestrel__Certificates__Default__Password=${ASPNETCORE_KESTREL_CERTIFICATES_DEFAULT_PASSWORD}'
+      - 'ASPNETCORE_Kestrel__Certificates__Default__Path=${ASPNETCORE_KESTREL_CERTIFICATES_DEFAULT_PATH}'
+      - 'MessageBrokerSettings__Host=${MESSAGE_BROKER_SETTINGS_HOST}'
+      - 'AzureStorageSettings:ConnectionString=${AZURESTORAGESETTINGS_CONNECTIONSTRING}'
+      - 'AzureStorageSettings:ContainerName=${AZURESTORAGESETTINGS_CONTAINERNAME}'
+      - 'AzureStorageSettings:ConnectionName=${AZURESTORAGESETTINGS_CONNECTIONNAME}'
+      - 'CONNECTIONSTRINGS:DEFAULTCONNECTION=${CONNECTIONSTRINGS_DEFAULTCONNECTION}'
+    ports:
+      - "5000:80"
+      - "5001:443"
+    volumes:
+      - '$USERPROFILE\.aspnet\https:/https/'
+    networks:
+      - rentalmanager
+
+  rentalmanager_db:
+    image: postgres:latest
+    environment:
+      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_PASSWORD=postgres'
+      - 'POSTGRES_DB=rentalmanager'
+    volumes:
+      - 'rentalmanager-db:/var/lib/postgresql/data'
+    ports:
+      - "5432:5432"
+    networks:
+      - rentalmanager
+
+  redpanda:    
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    command:
+      - redpanda start
+      - --smp 1
+      - --overprovisioned
+      - --node-id 0
+      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+      - --pandaproxy-addr 0.0.0.0:8082
+      - --advertise-pandaproxy-addr localhost:8082
+      - --set redpanda.kafka_batch_max_bytes=20971520
+      - --set redpanda.kafka_request_max_bytes=20971520
+    ports:
+      - "8081:8081"
+      - "8082:8082"
+      - "9092:9092"
+      - "9644:9644"
+      - "29092:29092"
+    volumes:
+      - redpanda_data:/var/lib/redpanda
+    networks:
+      - rentalmanager
+
+  redpanda-console:    
+    image: docker.redpanda.com/redpandadata/console:latest
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["redpanda:29092"]
+          schemaRegistry:
+            enabled: true
+            urls: ["http://redpanda:8081"]
+        redpanda:
+          adminApi:
+            enabled: true
+            urls: ["http://redpanda:9644"]
+    ports:
+      - "8080:8080"
+    networks:
+      - rentalmanager
+    depends_on:
+      - redpanda
+
+  azurite:    
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - "10000:10000" #blob service's port
+      - "10001:10001" #queue service's port
+      - "10002:10002" #table service's port    
+    networks:
+      - rentalmanager
+
+volumes:
+  rentalmanager-db:
+  redpanda_data:
+
+networks:
+  rentalmanager:
+    driver: bridge
