@@ -13,10 +13,14 @@ using RentalManager.WebApi.Persistence.Repository.MotorCycleRepository;
 namespace RentalManager.WebApi.Features.MotorCycles;
 
 public class AddMotorCycle
-{    
-    public class Handler(IMotorCycleRepository repository, ITopicProducer<MotorCycleCreated> producer) : IRequestHandler<MotorCycleRequest, Result<MotorCycleResponse>>
+{  
+    public record Command(string Id,
+        int Year,
+        string Model,
+        string Plate): IRequest<Result<MotorCycleResponse>>;
+    public class Handler(IMotorCycleRepository repository, ITopicProducer<MotorCycleCreated> producer) : IRequestHandler<Command, Result<MotorCycleResponse>>
     {
-        public async Task<Result<MotorCycleResponse>> Handle(MotorCycleRequest request, CancellationToken cancellationToken)
+        public async Task<Result<MotorCycleResponse>> Handle(Command request, CancellationToken cancellationToken)
         {
             var motorCycles = await repository.GetMotorCycleByPlateAsync(request.Plate, cancellationToken);
             if (motorCycles.Any())
@@ -39,14 +43,15 @@ public class AddMotorCycle
         {
             app.MapPost("/motos", async ([FromBody] MotorCycleRequest request, [FromServices] ISender sender) =>
             {
-                var result = await sender.Send(request);
+                var command = request.Adapt<Command>();
+                var result = await sender.Send(command);
 
                 return result.IsSuccess ? Results.Created()
                 : Results.BadRequest(result.Error);
             })
             .Produces<BadRequest<Error>>()
             .Produces<Created<MotorCycleResponse>>()
-            .WithTags("MotorCycles")
+            .WithTags("motos")
             .WithName("AddMotorCycle")
             .WithSummary("Cadastrar uma nova moto")
             .IncludeInOpenApi();

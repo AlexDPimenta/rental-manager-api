@@ -44,7 +44,7 @@ public class GetMotorCyclesByPlate
             {
                 var result = await sender.Send(new Query(placa));
 
-                if(!result.Value.MotorCycles.Any())
+                if(result.IsFailure)
                 {
                     return Results.NotFound(result.Error);
                 }
@@ -52,7 +52,7 @@ public class GetMotorCyclesByPlate
                 return Results.Ok(result.Value.MotorCycles);
             })           
             .Produces<Ok<MotorCycleResponse>>()
-            .WithTags("MotorCycles")
+            .WithTags("motos")
             .WithName("GetMotorCyclesByPlate")
             .WithSummary("Consultar motos existentes")
             .IncludeInOpenApi();
