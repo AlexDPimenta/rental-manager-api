@@ -1,4 +1,6 @@
-﻿namespace RentalManager.WebApi.Common;
+﻿using MassTransit.SagaStateMachine;
+
+namespace RentalManager.WebApi.Common;
 
 public class Result
 {
@@ -77,7 +79,7 @@ public class Result
     public static Result<TValue> Success<TValue>(TValue value)
     {
         return new Result<TValue>(value, true, Error.None);
-    }    
+    }           
 
 
 
