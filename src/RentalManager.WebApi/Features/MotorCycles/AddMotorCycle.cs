@@ -24,7 +24,7 @@ public class AddMotorCycle
         {
             var motorCycles = await repository.GetMotorCycleByPlateAsync(request.Plate, cancellationToken);
             if (motorCycles.Any())
-                return Result.Failure<MotorCycleResponse>(new Error("Moto já cadastrada"));
+                return Result.Failure<MotorCycleResponse>(Error.Failure("Moto já cadastrada"));
             
             if (request.Year == 2024)
             {

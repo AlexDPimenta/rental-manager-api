@@ -28,7 +28,7 @@ public class GetMotorCyclesByPlate
             var motorCycles = await repository.GetMotorCycleByPlateAsync(request.Plate, cancellationToken);
 
             if(!motorCycles.Any())
-                return Result.Failure<Response>(new Error("Moto não encontrada"));
+                return Result.Failure<Response>(Error.Failure("Moto não encontrada"));
 
             var response = motorCycles.Adapt<IEnumerable<MotorCycleResponse>>();
 
@@ -49,7 +49,7 @@ public class GetMotorCyclesByPlate
                     return Results.NotFound(result.Error);
                 }
 
-                return Results.Ok(result.Value.MotorCycles);
+                return result.IsSuccess ? Results.Ok(result.Value.MotorCycles) : Results.NotFound(result.Error);
             })           
             .Produces<Ok<MotorCycleResponse>>()
             .WithTags("motos")

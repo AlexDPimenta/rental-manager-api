@@ -1,4 +1,5 @@
 ﻿using MassTransit.SagaStateMachine;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace RentalManager.WebApi.Common;
 
@@ -15,17 +16,14 @@ public class Result
     /// </exception>
     protected Result(bool isSuccess, Error error)
     {
-        switch (isSuccess)
+        if(isSuccess && error != Error.None ||
+            !isSuccess && error == Error.None)
         {
-            case true when error != Error.None:
-                throw new InvalidOperationException();
-            case false when error == Error.None:
-                throw new InvalidOperationException();
-            default:
-                IsSuccess = isSuccess;
-                Error = error;
-                break;
+            throw new ArgumentException("Invalid error", nameof(error));
         }
+
+        IsSuccess = isSuccess;
+        Error = error;
     }
     
 
@@ -46,6 +44,9 @@ public class Result
     /// </remarks>
     public bool IsFailure => !IsSuccess;
 
+    public static bool IsNotFound { get; private set; }   
+
+
     /// <summary>
     ///     Gets the error property.
     /// </summary>
@@ -58,6 +59,12 @@ public class Result
 
     public static Result<TValue> Failure<TValue>(Error error)
     {
+        return new Result<TValue>(default, false, error);
+    }
+
+    public static Result<TValue> NotFound<TValue>(Error error)
+    {
+        IsNotFound = true;
         return new Result<TValue>(default, false, error);
     }
 
@@ -108,12 +115,9 @@ public class Result
     }
 }
 
-public sealed record Error(string mensagem)
-{
-    public static readonly Error NullValue = new("The specified result value is null.");
 
-    public static readonly Error None = new(string.Empty);
-}
+// add code to Error
+
 
 public class Result<TValue> : Result
 {
@@ -151,5 +155,5 @@ public class Result<TValue> : Result
     public static implicit operator Result<TValue>(TValue? value)
     {
         return Create(value);
-    }
+    }    
 }

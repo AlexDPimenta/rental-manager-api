@@ -5,31 +5,29 @@ using RentalManager.WebApi.Persistence.Repository.MotorCycleRepository;
 
 namespace RentalManager.WebApi.Tests.Features.MotorCycles;
 
-public class UpdatePlateByIdTestCase
+public class GetMotorCycleByIdTestCase
 {
-
-    private readonly UpdatePlateById.Handler _handler;
     private readonly IMotorCycleRepository _repository = Substitute.For<IMotorCycleRepository>();
-
-    public UpdatePlateByIdTestCase()
+    private readonly GetMotorCycleById.Handler _handler;
+    public GetMotorCycleByIdTestCase()
     {
-        _handler = new UpdatePlateById.Handler(_repository);
+        _handler = new GetMotorCycleById.Handler(_repository);
     }
 
     [Fact]
-    public async Task ShouldReturnSuccessWhenUpdatePlateById()
+    public async Task ShouldReturnMotorCycleWhenMotorCycleExists()
     {
         // Arrange
-        var motorCycle = new MotorCycle { Id = "1", Plate = "ABC-1234" };
-        _repository.GetMotorCycleByIdAsync("1", Arg.Any<CancellationToken>()).Returns(Task.FromResult(motorCycle));
+        var motorCycle = new MotorCycle { Id = "1", Plate = "ABC-1234" };       
+        _repository.GetMotorCycleByIdAsync("1", Arg.Any<CancellationToken>()).Returns(Task.FromResult(motorCycle));        
 
         // Act
-        var result = await _handler.Handle(new UpdatePlateById.Command("1", "DEF-5678"), CancellationToken.None);
+        var result = await _handler.Handle(new GetMotorCycleById.Query("1"), CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
-        result.Value.Message.Should().Be("Placa modificada com sucesso");        
+        result.Value.Should().BeEquivalentTo(motorCycle);
     }
 
     [Fact]
@@ -39,13 +37,12 @@ public class UpdatePlateByIdTestCase
         _repository.GetMotorCycleByIdAsync("1", Arg.Any<CancellationToken>()).Returns(Task.FromResult(default(MotorCycle)));
 
         // Act
-        var result = await _handler.Handle(new UpdatePlateById.Command("1", "DEF-5678"), CancellationToken.None);
+        var result = await _handler.Handle(new GetMotorCycleById.Query("1"), CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
         result.IsFailure.Should().BeTrue();
-        result.Error.ErrorType.Should().Be(ErrorType.Failure);
-        result.Error.Message.Should().Be("Dados inválidos");
+        result.Error.ErrorType.Should().Be(ErrorType.NotFound);
+        result.Error.Message.Should().Be("Moto não encontrada");
     }
-
 }

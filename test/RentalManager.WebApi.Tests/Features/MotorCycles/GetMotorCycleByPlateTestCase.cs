@@ -41,7 +41,7 @@ public class GetMotorCycleByPlateTestCase
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.mensagem.Should().Contain("Moto não encontrada");
+        result.Error.Message.Should().Contain("Moto não encontrada");
     }
 
 }

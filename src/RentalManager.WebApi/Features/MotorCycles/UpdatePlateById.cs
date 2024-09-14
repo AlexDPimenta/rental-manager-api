@@ -19,7 +19,7 @@ public class UpdatePlateById
         {
             var motorCycle = await repository.GetMotorCycleByIdAsync(command.Id, cancellationToken);
             if (motorCycle == null)
-                return Result.Failure<UpdatePlateByIdResponse>(new Error("Moto não encontrada"));
+                return Result.Failure<UpdatePlateByIdResponse>(Error.Failure("Dados inválidos"));
 
             motorCycle.Plate = command.Plate;
 

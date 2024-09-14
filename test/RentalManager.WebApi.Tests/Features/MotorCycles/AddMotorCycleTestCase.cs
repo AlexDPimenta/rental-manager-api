@@ -30,7 +30,7 @@ public sealed class AddMotorCycleTestCase
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.mensagem.Should().Contain("Moto já cadastrada");        
+        result.Error.Message.Should().Contain("Moto já cadastrada");        
     }
 
     [Fact]
