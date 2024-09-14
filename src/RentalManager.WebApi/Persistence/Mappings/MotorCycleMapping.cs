@@ -23,6 +23,11 @@ public class MotorCycleMapping
                 .HasColumnType("varchar(100)")
                 .HasMaxLength(100)
                 .IsRequired();
+
+            entity.HasMany(e => e.Leases)
+                .WithOne(l => l.MotorCycle)
+                .HasForeignKey(c => c.MotorCycleId)
+                .OnDelete(DeleteBehavior.Cascade);                
         });
     }
 }

@@ -36,6 +36,11 @@ public class DriverMapping
             entity.Property(e => e.LicenseImage)
                 .HasColumnType("varchar(1500)")                
                 .IsRequired();
+
+            entity.HasMany(e => e.Leases)
+                .WithOne(e => e.Driver)
+                .HasForeignKey(c => c.DriverId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

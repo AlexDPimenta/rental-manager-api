@@ -12,7 +12,7 @@ using RentalManager.WebApi.Persistence.Context;
 namespace RentalManager.WebApi.Migrations
 {
     [DbContext(typeof(RentalManagerDbContext))]
-    [Migration("20240914152634_Initial")]
+    [Migration("20240914214252_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -74,6 +74,9 @@ namespace RentalManager.WebApi.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<string>("DriverId1")
+                        .HasColumnType("varchar(100)");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -85,6 +88,9 @@ namespace RentalManager.WebApi.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
+                    b.Property<string>("MotorCycleId1")
+                        .HasColumnType("varchar(100)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -92,7 +98,11 @@ namespace RentalManager.WebApi.Migrations
 
                     b.HasIndex("DriverId");
 
+                    b.HasIndex("DriverId1");
+
                     b.HasIndex("MotorCycleId");
+
+                    b.HasIndex("MotorCycleId1");
 
                     b.ToTable("Leases", (string)null);
                 });
@@ -102,6 +112,9 @@ namespace RentalManager.WebApi.Migrations
                     b.Property<string>("Id")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
+
+                    b.Property<Guid>("LeaseId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Model")
                         .IsRequired()
@@ -129,15 +142,33 @@ namespace RentalManager.WebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RentalManager.WebApi.Entities.Driver", null)
+                        .WithMany("Leases")
+                        .HasForeignKey("DriverId1");
+
                     b.HasOne("RentalManager.WebApi.Entities.MotorCycle", "MotorCycle")
                         .WithMany()
                         .HasForeignKey("MotorCycleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RentalManager.WebApi.Entities.MotorCycle", null)
+                        .WithMany("Leases")
+                        .HasForeignKey("MotorCycleId1");
+
                     b.Navigation("Driver");
 
                     b.Navigation("MotorCycle");
+                });
+
+            modelBuilder.Entity("RentalManager.WebApi.Entities.Driver", b =>
+                {
+                    b.Navigation("Leases");
+                });
+
+            modelBuilder.Entity("RentalManager.WebApi.Entities.MotorCycle", b =>
+                {
+                    b.Navigation("Leases");
                 });
 #pragma warning restore 612, 618
         }

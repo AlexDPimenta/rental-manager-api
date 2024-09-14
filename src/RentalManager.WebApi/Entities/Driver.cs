@@ -8,5 +8,6 @@ public class Driver
     public DateOnly BirthdayDate { get; set; }
     public string LicenseNumber { get; set; }
     public string LicenseCategory { get; set; }
-    public string LicenseImage { get; set; }
+    public string LicenseImage { get; set; }   
+    public IEnumerable<Lease> Leases { get; set; }
 }

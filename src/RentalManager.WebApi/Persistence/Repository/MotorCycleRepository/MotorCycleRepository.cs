@@ -17,9 +17,10 @@ public class MotorCycleRepository(RentalManagerDbContext dbContext) : IMotorCycl
 
     public async Task<MotorCycle> GetMotorCycleByIdAsync(string id, CancellationToken cancellationToken)
     {
-        return await dbContext.MotorCycles
-            .Where(m => m.Id == id)
-            .FirstOrDefaultAsync(cancellationToken);
+        var motorCycle = await dbContext.MotorCycles
+            .Include(m => m.Leases)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return motorCycle;
     }
 
     public async Task<IEnumerable<MotorCycle>> GetMotorCycleByPlateAsync(string plate, CancellationToken cancellationToken)
@@ -28,6 +29,12 @@ public class MotorCycleRepository(RentalManagerDbContext dbContext) : IMotorCycl
             .Where(m => string.IsNullOrEmpty(plate) || m.Plate == plate)
             .ToListAsync(cancellationToken);
 
+    }
+
+    public async Task RemoveMotorCycleAsync(MotorCycle motorCycle, CancellationToken cancellationToken)
+    {
+        dbContext.MotorCycles.Remove(motorCycle);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task UpdatePlateByIdAsync(MotorCycle motorCycle, CancellationToken cancellationToken)
