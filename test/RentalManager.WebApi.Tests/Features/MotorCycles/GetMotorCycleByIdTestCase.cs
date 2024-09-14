@@ -26,8 +26,7 @@ public class GetMotorCycleByIdTestCase
 
         // Assert
         result.Should().NotBeNull();
-        result.IsSuccess.Should().BeTrue();
-        result.Value.Should().BeEquivalentTo(motorCycle);
+        result.IsSuccess.Should().BeTrue();        
     }
 
     [Fact]

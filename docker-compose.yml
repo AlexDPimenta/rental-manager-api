@@ -21,6 +21,10 @@ services:
       - '$USERPROFILE\.aspnet\https:/https/'
     networks:
       - rentalmanager
+    depends_on:
+      - rentalmanager_db
+      - redpanda
+      - azurite
 
   rentalmanager_db:
     image: postgres:latest
@@ -33,54 +37,32 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - rentalmanager
+      - rentalmanager  
 
-  redpanda:    
-    image: docker.redpanda.com/redpandadata/redpanda:latest
-    command:
-      - redpanda start
-      - --smp 1
-      - --overprovisioned
-      - --node-id 0
-      - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
-      - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
-      - --pandaproxy-addr 0.0.0.0:8082
-      - --advertise-pandaproxy-addr localhost:8082
-      - --set redpanda.kafka_batch_max_bytes=20971520
-      - --set redpanda.kafka_request_max_bytes=20971520
-    ports:
-      - "8081:8081"
-      - "8082:8082"
-      - "9092:9092"
-      - "9644:9644"
-      - "29092:29092"
-    volumes:
-      - redpanda_data:/var/lib/redpanda
-    networks:
-      - rentalmanager
-
-  redpanda-console:    
-    image: docker.redpanda.com/redpandadata/console:latest
-    entrypoint: /bin/sh
-    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
-    environment:
-      CONFIG_FILEPATH: /tmp/config.yml
-      CONSOLE_CONFIG_FILE: |
-        kafka:
-          brokers: ["redpanda:29092"]
-          schemaRegistry:
-            enabled: true
-            urls: ["http://redpanda:8081"]
-        redpanda:
-          adminApi:
-            enabled: true
-            urls: ["http://redpanda:9644"]
-    ports:
-      - "8080:8080"
-    networks:
-      - rentalmanager
-    depends_on:
-      - redpanda
+  redpanda:
+      container_name: rentalmanager_redpanda
+      image: docker.redpanda.com/redpandadata/redpanda:latest
+      command:
+        - redpanda start
+        - --smp 1
+        - --overprovisioned
+        - --node-id 0
+        - --kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+        - --advertise-kafka-addr PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+        - --pandaproxy-addr 0.0.0.0:8082
+        - --advertise-pandaproxy-addr localhost:8082
+        - --set redpanda.kafka_batch_max_bytes=20971520
+        - --set redpanda.kafka_request_max_bytes=20971520
+      ports:
+        - "8081:8081"
+        - "8082:8082"
+        - "9092:9092"
+        - "9644:9644"
+        - "29092:29092"
+      volumes:
+        - redpanda_data:/var/lib/redpanda
+      networks:
+        - rentalmanager  
 
   azurite:    
     image: mcr.microsoft.com/azure-storage/azurite
@@ -93,7 +75,7 @@ services:
 
 volumes:
   rentalmanager-db:
-  redpanda_data:
+  redpanda_data:  
 
 networks:
   rentalmanager:

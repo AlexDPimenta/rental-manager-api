@@ -1,7 +1,5 @@
-﻿namespace RentalManager.WebApi.Contracts.MotorCycles
+﻿namespace RentalManager.WebApi.Contracts.MotorCycles;
+public class UpdatePlateByIdRequest
 {
-    public class UpdatePlateByIdRequest
-    {        
-        public string Plate { get; set; }
-    }
+    public string Plate { get; set; }
 }
