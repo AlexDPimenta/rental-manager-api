@@ -9,12 +9,20 @@ public class MotorCycleMapping
     {
         modelBuilder.Entity<MotorCycle>(entity =>
         {
-            entity.ToTable("motorcycles");
+            entity.ToTable("MotorCycles");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Id).HasColumnName("id").HasColumnType("varchar").HasMaxLength(100).IsRequired();
-            entity.Property(e => e.Year).HasColumnName("year");
-            entity.Property(e => e.Model).HasColumnName("model").HasColumnType("varchar").HasMaxLength(100).IsRequired();
-            entity.Property(e => e.Plate).HasColumnName("plate").HasColumnType("varchar").HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Id)               
+                .HasColumnType("varchar(100)")
+                .HasMaxLength(100)
+                .IsRequired();
+            entity.Property(e => e.Year);                
+            entity.Property(e => e.Model)               
+                .HasColumnType("varchar(100)")
+                .HasMaxLength(100).IsRequired();
+            entity.Property(e => e.Plate)                
+                .HasColumnType("varchar(100)")
+                .HasMaxLength(100)
+                .IsRequired();
         });
     }
 }

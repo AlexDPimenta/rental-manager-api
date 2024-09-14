@@ -15,7 +15,11 @@ public sealed class RentalManagerDbContext: DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         new MotorCycleMapping(modelBuilder);
+        new DriverMapping(modelBuilder);
+        new LeaseMapping(modelBuilder);
     }    
 
     public DbSet<MotorCycle> MotorCycles { get; set; }
+    public DbSet<Driver> Drivers { get; set; }
+    public DbSet<Lease> Leases { get; set; }
 }
