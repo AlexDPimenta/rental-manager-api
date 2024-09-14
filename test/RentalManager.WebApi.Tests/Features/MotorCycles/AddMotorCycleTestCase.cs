@@ -22,7 +22,7 @@ public sealed class AddMotorCycleTestCase
     public async Task Handle_WhenMotorCycleExists_ReturnsFailure()
     {
         // Arrange
-        var request = new MotorCycleRequest { Plate = "ABC1234" };
+        var request = new AddMotorCycle.Command("test-moto", 2020, "test-model", "test-plate");
         _repository.GetMotorCycleByPlateAsync(request.Plate, Arg.Any<CancellationToken>()).Returns(new List<MotorCycle>() { new MotorCycle { Plate = request.Plate } });
 
         // Act
@@ -30,14 +30,14 @@ public sealed class AddMotorCycleTestCase
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        result.Error.mensagem.Should().Contain("Moto já cadastrada");        
+        result.Error.Message.Should().Contain("Moto já cadastrada");        
     }
 
     [Fact]
     public async Task Handle_WhenYearIs2024_ProducesMotorCycleCreatedEvent()
     {
         // Arrange
-        var request = new MotorCycleRequest { Id = "moto123", Model = "Test model", Plate = "ABC1234", Year = 2024 };
+        var request = new AddMotorCycle.Command("test-moto", 2024, "test-model", "test-plate");
 
         // Act
         var result = await _handler.Handle(request, CancellationToken.None);

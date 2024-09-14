@@ -13,14 +13,18 @@ using RentalManager.WebApi.Persistence.Repository.MotorCycleRepository;
 namespace RentalManager.WebApi.Features.MotorCycles;
 
 public class AddMotorCycle
-{    
-    public class Handler(IMotorCycleRepository repository, ITopicProducer<MotorCycleCreated> producer) : IRequestHandler<MotorCycleRequest, Result<MotorCycleResponse>>
+{  
+    public record Command(string Id,
+        int Year,
+        string Model,
+        string Plate): IRequest<Result<MotorCycleResponse>>;
+    public class Handler(IMotorCycleRepository repository, ITopicProducer<MotorCycleCreated> producer) : IRequestHandler<Command, Result<MotorCycleResponse>>
     {
-        public async Task<Result<MotorCycleResponse>> Handle(MotorCycleRequest request, CancellationToken cancellationToken)
+        public async Task<Result<MotorCycleResponse>> Handle(Command request, CancellationToken cancellationToken)
         {
             var motorCycles = await repository.GetMotorCycleByPlateAsync(request.Plate, cancellationToken);
             if (motorCycles.Any())
-                return Result.Failure<MotorCycleResponse>(new Error("Moto já cadastrada"));
+                return Result.Failure<MotorCycleResponse>(Error.Failure("Moto já cadastrada"));
             
             if (request.Year == 2024)
             {
@@ -33,22 +37,24 @@ public class AddMotorCycle
         }
     }
 
-    public class AddMotorCycleModule: ICarterModule
-    {        
+    public class AddMotorCycleModule : ICarterModule
+    {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
             app.MapPost("/motos", async ([FromBody] MotorCycleRequest request, [FromServices] ISender sender) =>
-            {               
-                var result = await sender.Send(request);               
+            {
+                var command = request.Adapt<Command>();
+                var result = await sender.Send(command);
 
-                return result.IsSuccess ?  Results.Created()
-                : Results.BadRequest(result.Error);                
+                return result.IsSuccess ? Results.Created()
+                : Results.BadRequest(result.Error);
             })
             .Produces<BadRequest<Error>>()
             .Produces<Created<MotorCycleResponse>>()
-            .WithTags("MotorCycles")
-            .WithName("AddMotorCycle")            
-            .IncludeInOpenApi();                        
+            .WithTags("motos")
+            .WithName("AddMotorCycle")
+            .WithSummary("Cadastrar uma nova moto")
+            .IncludeInOpenApi();
         }
     }
 }
