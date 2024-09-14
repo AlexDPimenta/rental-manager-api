@@ -9,6 +9,7 @@ using RentalManager.WebApi.Entities;
 using RentalManager.WebApi.Events;
 using RentalManager.WebApi.Events.Consumers;
 using RentalManager.WebApi.Persistence.Context;
+using RentalManager.WebApi.Persistence.Repository.DriversRepository;
 using RentalManager.WebApi.Persistence.Repository.MotorCycleRepository;
 using RentalManager.WebApi.Settings;
 using System.Reflection;
@@ -111,6 +112,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IMotorCycleRepository, MotorCycleRepository>();
+        services.AddScoped<IDriverRepository, DriverRepository>();
 
         return services;
     }
