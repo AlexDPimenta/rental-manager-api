@@ -20,8 +20,9 @@ public class DriverRepository(RentalManagerDbContext dbContext): IDriverReposito
         return driver;
     }
 
-    public Task UpdateDriverLicenseImage(string licenseImage, CancellationToken cancellationToken)
+    public async Task<Driver> GetDriverByIdAsync(string id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var driver = await dbContext.Drivers.FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
+        return driver;
     }
 }
