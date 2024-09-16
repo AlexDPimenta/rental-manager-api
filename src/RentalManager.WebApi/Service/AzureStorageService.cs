@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using RentalManager.WebApi.Settings;
 using System.IO;
 
-namespace RentalManager.WebApi.Persistence.Service;
+namespace RentalManager.WebApi.Service;
 
 public class AzureStorageService : IAzureStorageService
 {
@@ -18,15 +18,15 @@ public class AzureStorageService : IAzureStorageService
         _blobServiceClient = new BlobServiceClient(options.Value.ConnectionString);
         _blobClient = _blobServiceClient.GetBlobContainerClient(options.Value.ContainerName);
         _containerName = options.Value.ContainerName;
-    }   
+    }
 
-    public async Task<string> UploadFileAsync(string fileName, 
-        string base64Image, CancellationToken cancellationToken)    
+    public async Task<string> UploadFileAsync(string fileName,
+        string base64Image, CancellationToken cancellationToken)
     {
         await _blobClient.CreateIfNotExistsAsync();
 
         var blockBlobClient = _blobClient.GetBlockBlobClient(fileName);
-        byte[] imageBytes = Convert.FromBase64String(base64Image);        
+        byte[] imageBytes = Convert.FromBase64String(base64Image);
 
         var options = new BlockBlobOpenWriteOptions
         {
@@ -42,9 +42,9 @@ public class AzureStorageService : IAzureStorageService
         {
             await stream.CopyToAsync(streamOpen);
         }
-            
+
         await streamOpen.FlushAsync();
 
-        return blockBlobClient.Uri.AbsoluteUri;                
+        return blockBlobClient.Uri.AbsoluteUri;
     }
 }

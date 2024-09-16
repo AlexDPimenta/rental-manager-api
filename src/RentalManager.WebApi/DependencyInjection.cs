@@ -10,7 +10,7 @@ using RentalManager.WebApi.Events.Consumers;
 using RentalManager.WebApi.Persistence.Context;
 using RentalManager.WebApi.Persistence.Repository.DriversRepository;
 using RentalManager.WebApi.Persistence.Repository.MotorCycleRepository;
-using RentalManager.WebApi.Persistence.Service;
+using RentalManager.WebApi.Service;
 using RentalManager.WebApi.Settings;
 using System.Reflection;
 using System.Text.Json.Serialization;

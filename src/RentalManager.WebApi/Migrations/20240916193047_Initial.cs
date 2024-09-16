@@ -1,7 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
+
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
 namespace RentalManager.WebApi.Migrations
 {
@@ -43,6 +46,19 @@ namespace RentalManager.WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Plans",
+                columns: table => new
+                {
+                    DurationInDays = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CostPerDay = table.Column<decimal>(type: "numeric(10,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Plans", x => x.DurationInDays);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Leases",
                 columns: table => new
                 {
@@ -52,7 +68,7 @@ namespace RentalManager.WebApi.Migrations
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExpectedEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Plan = table.Column<int>(type: "integer", nullable: false)
+                    DurationInDays = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -69,12 +85,35 @@ namespace RentalManager.WebApi.Migrations
                         principalTable: "MotorCycles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Leases_Plans_DurationInDays",
+                        column: x => x.DurationInDays,
+                        principalTable: "Plans",
+                        principalColumn: "DurationInDays",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Plans",
+                columns: new[] { "DurationInDays", "CostPerDay" },
+                values: new object[,]
+                {
+                    { 7, 30.00m },
+                    { 15, 28.00m },
+                    { 30, 22.00m },
+                    { 45, 20.00m },
+                    { 50, 18.00m }
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Leases_DriverId",
                 table: "Leases",
                 column: "DriverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Leases_DurationInDays",
+                table: "Leases",
+                column: "DurationInDays");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Leases_MotorCycleId",
@@ -93,6 +132,9 @@ namespace RentalManager.WebApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "MotorCycles");
+
+            migrationBuilder.DropTable(
+                name: "Plans");
         }
     }
 }

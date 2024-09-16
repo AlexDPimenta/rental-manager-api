@@ -23,7 +23,7 @@ namespace RentalManager.WebApi.Features.Drivers
             public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
             {
                 var driverExists = await repository.GetDriverByCnpjOrLicenseNumber(request.Cnpj, request.LicenseNumber, cancellationToken) != null;
-                if (driverExists)
+                if (driverExists || request.LicenseCategory.ToLower() is not ("a" or "b" or "ab") )
                 {
                     return Result.Failure(Error.Failure("Dados inválidos"));
                 }

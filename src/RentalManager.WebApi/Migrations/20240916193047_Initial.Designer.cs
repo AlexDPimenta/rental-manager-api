@@ -12,7 +12,7 @@ using RentalManager.WebApi.Persistence.Context;
 namespace RentalManager.WebApi.Migrations
 {
     [DbContext(typeof(RentalManagerDbContext))]
-    [Migration("20240916185322_Initial")]
+    [Migration("20240916193047_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -73,6 +73,9 @@ namespace RentalManager.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(100)");
 
+                    b.Property<int>("DurationInDays")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -83,15 +86,14 @@ namespace RentalManager.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(100)");
 
-                    b.Property<int>("Plan")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DriverId");
+
+                    b.HasIndex("DurationInDays");
 
                     b.HasIndex("MotorCycleId");
 
@@ -122,11 +124,60 @@ namespace RentalManager.WebApi.Migrations
                     b.ToTable("MotorCycles", (string)null);
                 });
 
+            modelBuilder.Entity("RentalManager.WebApi.Entities.Plan", b =>
+                {
+                    b.Property<int>("DurationInDays")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DurationInDays"));
+
+                    b.Property<decimal>("CostPerDay")
+                        .HasColumnType("decimal(10, 2)");
+
+                    b.HasKey("DurationInDays");
+
+                    b.ToTable("Plans", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            DurationInDays = 7,
+                            CostPerDay = 30.00m
+                        },
+                        new
+                        {
+                            DurationInDays = 15,
+                            CostPerDay = 28.00m
+                        },
+                        new
+                        {
+                            DurationInDays = 30,
+                            CostPerDay = 22.00m
+                        },
+                        new
+                        {
+                            DurationInDays = 45,
+                            CostPerDay = 20.00m
+                        },
+                        new
+                        {
+                            DurationInDays = 50,
+                            CostPerDay = 18.00m
+                        });
+                });
+
             modelBuilder.Entity("RentalManager.WebApi.Entities.Lease", b =>
                 {
                     b.HasOne("RentalManager.WebApi.Entities.Driver", "Driver")
                         .WithMany("Leases")
                         .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RentalManager.WebApi.Entities.Plan", "LeasePlan")
+                        .WithMany()
+                        .HasForeignKey("DurationInDays")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -137,6 +188,8 @@ namespace RentalManager.WebApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Driver");
+
+                    b.Navigation("LeasePlan");
 
                     b.Navigation("MotorCycle");
                 });
