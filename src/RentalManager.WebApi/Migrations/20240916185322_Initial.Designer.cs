@@ -12,7 +12,7 @@ using RentalManager.WebApi.Persistence.Context;
 namespace RentalManager.WebApi.Migrations
 {
     [DbContext(typeof(RentalManagerDbContext))]
-    [Migration("20240914214252_Initial")]
+    [Migration("20240916185322_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -31,8 +31,8 @@ namespace RentalManager.WebApi.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<DateOnly>("BirthdayDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("BirthdayDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Cnpj")
                         .IsRequired()
@@ -71,10 +71,6 @@ namespace RentalManager.WebApi.Migrations
 
                     b.Property<string>("DriverId")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("DriverId1")
                         .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("EndDate")
@@ -85,11 +81,10 @@ namespace RentalManager.WebApi.Migrations
 
                     b.Property<string>("MotorCycleId")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<string>("MotorCycleId1")
-                        .HasColumnType("varchar(100)");
+                    b.Property<int>("Plan")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -98,11 +93,7 @@ namespace RentalManager.WebApi.Migrations
 
                     b.HasIndex("DriverId");
 
-                    b.HasIndex("DriverId1");
-
                     b.HasIndex("MotorCycleId");
-
-                    b.HasIndex("MotorCycleId1");
 
                     b.ToTable("Leases", (string)null);
                 });
@@ -112,9 +103,6 @@ namespace RentalManager.WebApi.Migrations
                     b.Property<string>("Id")
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<Guid>("LeaseId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("Model")
                         .IsRequired()
@@ -137,24 +125,16 @@ namespace RentalManager.WebApi.Migrations
             modelBuilder.Entity("RentalManager.WebApi.Entities.Lease", b =>
                 {
                     b.HasOne("RentalManager.WebApi.Entities.Driver", "Driver")
-                        .WithMany()
+                        .WithMany("Leases")
                         .HasForeignKey("DriverId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RentalManager.WebApi.Entities.Driver", null)
-                        .WithMany("Leases")
-                        .HasForeignKey("DriverId1");
-
                     b.HasOne("RentalManager.WebApi.Entities.MotorCycle", "MotorCycle")
-                        .WithMany()
+                        .WithMany("Leases")
                         .HasForeignKey("MotorCycleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("RentalManager.WebApi.Entities.MotorCycle", null)
-                        .WithMany("Leases")
-                        .HasForeignKey("MotorCycleId1");
 
                     b.Navigation("Driver");
 

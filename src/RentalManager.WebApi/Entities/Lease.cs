@@ -8,6 +8,7 @@ public class Lease
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public DateTime ExpectedEndDate { get; set; }
+    public int Plan { get; set; }
     public MotorCycle MotorCycle { get; set; }
     public Driver Driver { get; set; }
 }

@@ -5,12 +5,12 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using RentalManager.WebApi.Entities;
 using RentalManager.WebApi.Events;
 using RentalManager.WebApi.Events.Consumers;
 using RentalManager.WebApi.Persistence.Context;
 using RentalManager.WebApi.Persistence.Repository.DriversRepository;
 using RentalManager.WebApi.Persistence.Repository.MotorCycleRepository;
+using RentalManager.WebApi.Persistence.Service;
 using RentalManager.WebApi.Settings;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -35,6 +35,8 @@ public static class DependencyInjection
         services.AddMassTransitConfiguration(configuration);
 
         services.AddSwagger();
+
+        services.AddAzureStorage(configuration);
 
         services.AddPersistence(configuration);
 
@@ -90,8 +92,6 @@ public static class DependencyInjection
             });
         });
 
-        services.AddMassTransitHostedService();
-
         return services;
     }
 
@@ -113,6 +113,22 @@ public static class DependencyInjection
 
         services.AddScoped<IMotorCycleRepository, MotorCycleRepository>();
         services.AddScoped<IDriverRepository, DriverRepository>();
+
+        return services;
+    }
+    
+    public static IServiceCollection AddAzureStorage(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<AzureStorageSettings>(
+            configuration.GetSection("AzureStorageSettings"));
+
+        services.AddSingleton<AzureStorageService>(provider =>
+        {
+            var settings = provider.GetRequiredService<IOptions<AzureStorageSettings>>();
+            return new AzureStorageService(settings);
+        });
+
+        services.AddScoped<IAzureStorageService, AzureStorageService>();
 
         return services;
     }
