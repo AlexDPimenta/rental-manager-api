@@ -38,9 +38,8 @@ public class DriverMapping
                 .IsRequired();
 
             entity.HasMany(e => e.Leases)
-                .WithOne(e => e.Driver)
-                .HasForeignKey(c => c.DriverId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .WithOne(c => c.Driver)
+                .HasForeignKey(c => c.DriverId);                
         });
     }
 }

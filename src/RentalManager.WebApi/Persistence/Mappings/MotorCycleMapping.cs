@@ -25,9 +25,8 @@ public class MotorCycleMapping
                 .IsRequired();
 
             entity.HasMany(e => e.Leases)
-                .WithOne(l => l.MotorCycle)
-                .HasForeignKey(c => c.MotorCycleId)
-                .OnDelete(DeleteBehavior.Cascade);                
+                .WithOne(e => e.MotorCycle)
+                .HasForeignKey(c => c.MotorCycleId);                
         });
     }
 }

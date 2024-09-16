@@ -9,5 +9,5 @@ public class Driver
     public string LicenseNumber { get; set; }
     public string LicenseCategory { get; set; }
     public string LicenseImage { get; set; }   
-    public IEnumerable<Lease> Leases { get; set; }
+    public IEnumerable<Lease> Leases { get; init; } = new List<Lease>();
 }
