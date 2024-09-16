@@ -62,12 +62,13 @@ namespace RentalManager.WebApi.Migrations
                 name: "Leases",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<string>(type: "text", nullable: false),
                     MotorCycleId = table.Column<string>(type: "varchar(100)", nullable: false),
                     DriverId = table.Column<string>(type: "varchar(100)", nullable: false),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExpectedEndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ReturnData = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     DurationInDays = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>

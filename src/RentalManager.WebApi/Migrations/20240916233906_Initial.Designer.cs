@@ -12,7 +12,7 @@ using RentalManager.WebApi.Persistence.Context;
 namespace RentalManager.WebApi.Migrations
 {
     [DbContext(typeof(RentalManagerDbContext))]
-    [Migration("20240916193047_Initial")]
+    [Migration("20240916233906_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -65,9 +65,8 @@ namespace RentalManager.WebApi.Migrations
 
             modelBuilder.Entity("RentalManager.WebApi.Entities.Lease", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
 
                     b.Property<string>("DriverId")
                         .IsRequired()
@@ -85,6 +84,9 @@ namespace RentalManager.WebApi.Migrations
                     b.Property<string>("MotorCycleId")
                         .IsRequired()
                         .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("ReturnData")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");

@@ -43,7 +43,7 @@ public class AddLease
                 return Result.Failure(Error.Failure("Dados inválidos!"));
             }
 
-            if (!driver.LicenseCategory.Contains("A"))
+            if (!driver.LicenseCategory.ToLower().Contains("a"))
                 return Result.Failure(Error.Failure("Dados inválidos"));
             
             if(request.StartDate > request.EndDate || request.StartDate > request.ExpectedEndDate)
