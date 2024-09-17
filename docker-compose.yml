@@ -6,7 +6,7 @@ services:
       dockerfile: src/RentalManager.WebApi/Dockerfile
     environment:
       - 'ASPNETCORE_ENVIRONMENT=Development'
-      - 'ASPNETCORE_URLS=https://+;http://+'
+      - 'ASPNETCORE_URLS=http://+'
       - 'ASPNETCORE_Kestrel__Certificates__Default__Password=${ASPNETCORE_KESTREL_CERTIFICATES_DEFAULT_PASSWORD}'
       - 'ASPNETCORE_Kestrel__Certificates__Default__Path=${ASPNETCORE_KESTREL_CERTIFICATES_DEFAULT_PATH}'
       - 'MessageBrokerSettings__Host=${MESSAGE_BROKER_SETTINGS_HOST}'
