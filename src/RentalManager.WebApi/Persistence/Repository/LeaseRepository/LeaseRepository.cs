@@ -23,4 +23,10 @@ public class LeaseRepository (RentalManagerDbContext context) : ILeaseRepository
 
         return lease;
     }
+
+    public async Task UpdateLeaseAsync(Lease lease, CancellationToken cancellationToken)
+    {
+        context.Update(lease);
+        await context.SaveChangesAsync(cancellationToken);
+    }
 }

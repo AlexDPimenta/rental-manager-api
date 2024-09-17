@@ -8,4 +8,6 @@ public interface ILeaseRepository
 
     Task<Lease> GetLeaseByIdAsync(string id, CancellationToken cancellationToken);
 
+    Task UpdateLeaseAsync(Lease lease, CancellationToken cancellationToken);
+
 }
