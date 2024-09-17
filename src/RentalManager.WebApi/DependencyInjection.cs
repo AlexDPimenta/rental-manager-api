@@ -5,6 +5,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using RentalManager.WebApi.Common.Exception;
 using RentalManager.WebApi.Events;
 using RentalManager.WebApi.Events.Consumers;
 using RentalManager.WebApi.Persistence.Context;
@@ -40,6 +41,8 @@ public static class DependencyInjection
         services.AddAzureStorage(configuration);
 
         services.AddPersistence(configuration);
+
+        services.AddExceptionHandler<GlobalExceptionHandler>();
 
 
         return services;

@@ -8,17 +8,10 @@ public static class MigrationExtension
 
     public static void ApplyMigrations(this WebApplication app)
     {
-        try
-        {
-            using var scope = app.Services.CreateScope();
+        using var scope = app.Services.CreateScope();
 
-            var dbContext = scope.ServiceProvider.GetRequiredService<RentalManagerDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<RentalManagerDbContext>();
 
-            dbContext.Database.Migrate();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
+        dbContext.Database.Migrate();               
     }
 }
