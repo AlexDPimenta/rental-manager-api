@@ -17,6 +17,7 @@ A API utiliza o padrão Vertical Slice, que consiste em organizar o código em c
 
 A API utiliza as seguintes tecnologias:
 
+- Minimal API com Carter: Facilita a criação de rotas e handlers de forma simplificada e modular.
 - Kafka: Utilizado para processamento assíncrono de eventos, como notificações e logs de locações.
 - Azure Storage: Utilizado para armazenar arquivos como cnh.
 - PostgreSQL: Banco de dados relacional para armazenar as informações das motos, entregadores, e locações.
