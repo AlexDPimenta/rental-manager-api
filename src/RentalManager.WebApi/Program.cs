@@ -25,9 +25,6 @@ app.UseExceptionHandler();
 app.ApplyMigrations();
 app.MapCarter();
 
-// add test endpoint with carter
-app.MapGet("/", () => "Hello World!");
-
 app.Run();
 
 

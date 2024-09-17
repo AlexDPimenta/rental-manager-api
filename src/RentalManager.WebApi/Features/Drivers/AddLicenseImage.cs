@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using RentalManager.WebApi.Common;
 using RentalManager.WebApi.Contracts.Drivers;
 using RentalManager.WebApi.Persistence.Repository.DriversRepository;
-using RentalManager.WebApi.Persistence.Service;
+using RentalManager.WebApi.Service;
 
 namespace RentalManager.WebApi.Features.Drivers;
 

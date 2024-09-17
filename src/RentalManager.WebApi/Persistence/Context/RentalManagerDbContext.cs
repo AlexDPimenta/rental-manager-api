@@ -17,9 +17,11 @@ public sealed class RentalManagerDbContext: DbContext
         new MotorCycleMapping(modelBuilder);
         new DriverMapping(modelBuilder);
         new LeaseMapping(modelBuilder);
+        new PlanMapping(modelBuilder);
     }    
 
     public DbSet<MotorCycle> MotorCycles { get; set; }
     public DbSet<Driver> Drivers { get; set; }
     public DbSet<Lease> Leases { get; set; }
+    public DbSet<Plan> Plans { get; set; }
 }

@@ -17,8 +17,11 @@ public class LeaseMapping
                 .IsRequired();
             entity.Property(e => e.ExpectedEndDate)
                 .IsRequired();
-            entity.Property(e => e.Plan)
-                .IsRequired();
+            entity.Property(e => e.ReturnData);
+            
+            entity.HasOne(l => l.LeasePlan)   
+              .WithMany()
+              .HasForeignKey(l => l.DurationInDays);
         });
     }
 }

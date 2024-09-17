@@ -1,8 +1,8 @@
 ﻿using RentalManager.WebApi.Contracts.Drivers;
 using RentalManager.WebApi.Persistence.Repository.DriversRepository;
-using RentalManager.WebApi.Persistence.Service;
 using RentalManager.WebApi.Features.Drivers;
 using RentalManager.WebApi.Entities;
+using RentalManager.WebApi.Service;
 
 namespace RentalManager.WebApi.Tests.Features.Drivers;
 

@@ -5,12 +5,14 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using RentalManager.WebApi.Common.Exception;
 using RentalManager.WebApi.Events;
 using RentalManager.WebApi.Events.Consumers;
 using RentalManager.WebApi.Persistence.Context;
 using RentalManager.WebApi.Persistence.Repository.DriversRepository;
+using RentalManager.WebApi.Persistence.Repository.LeaseRepository;
 using RentalManager.WebApi.Persistence.Repository.MotorCycleRepository;
-using RentalManager.WebApi.Persistence.Service;
+using RentalManager.WebApi.Service;
 using RentalManager.WebApi.Settings;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -39,6 +41,8 @@ public static class DependencyInjection
         services.AddAzureStorage(configuration);
 
         services.AddPersistence(configuration);
+
+        services.AddExceptionHandler<GlobalExceptionHandler>();
 
 
         return services;
@@ -113,6 +117,7 @@ public static class DependencyInjection
 
         services.AddScoped<IMotorCycleRepository, MotorCycleRepository>();
         services.AddScoped<IDriverRepository, DriverRepository>();
+        services.AddScoped<ILeaseRepository, LeaseRepository>();
 
         return services;
     }
